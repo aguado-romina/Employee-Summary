@@ -15,6 +15,7 @@ const employees = [];
 
 function initApp() {
   addMember();
+  
 }
 
 function addMember() {
@@ -40,22 +41,25 @@ function addMember() {
       message: "Enter team member's email address",
       name: "email"
   }])
-      .then(function(role) {
-          let newMember;
-          if (role === "Engineer") {
+    
+  .then(function employeeRole(answer) {
+    const newMember = [];
+       
+          if (answer.role === "Engineer") {
               newMember = new Engineer(name, email, id, github);
-          } else if (role === "Intern") {
+          } else if (answer.role === "Intern") {
               newMember = new Intern(name, email, id, school);
           } else {
               newMember = new Manager(name, email, id, officeNumber);
           }
           employees.push(newMember);
-          render(newMember)
+          
           .then(function() {
               if (moreMembers === "yes") {
                   addMember();
               } else {
                   console.log("All Done!");
+                  const Html = render(newMember);
               }
           });
           
