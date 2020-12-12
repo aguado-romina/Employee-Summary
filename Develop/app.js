@@ -13,9 +13,9 @@ const render = require("./lib/htmlRenderer");
 
 const employees = [];
 
+
 function initApp() {
   addMember();
-  
 }
 
 function addMember() {
@@ -43,27 +43,60 @@ function addMember() {
   }])
     
   .then(function employeeRole(answer) {
-    const newMember = [];
+    let newMember = [];
        
           if (answer.role === "Engineer") {
-              newMember = new Engineer(name, email, id, github);
+              inquirer.prompt([{
+                  message: "Whats your github?",
+                  name: "github",  
+              }]).then(function(engineerInfo){
+                newMember = new Engineer(answer.name, answer.email, answer.id, engineerInfo.github);
+                employees.push(newMember)  
+                moreMembers();  
+              })
+              
           } else if (answer.role === "Intern") {
-              newMember = new Intern(name, email, id, school);
+            inquirer.prompt([{
+                message: "Whats your school name?",
+                name: "school",  
+            }]).then(function(internInfo){
+              newMember = new Intern(answer.name, answer.email, answer.id, internInfo.school);
+              employees.push(newMember)  
+              moreMembers();  
+            })
+              
           } else {
-              newMember = new Manager(name, email, id, officeNumber);
+            inquirer.prompt([{
+                message: "Whats your officee number?",
+                name: "officeNumber",  
+            }]).then(function(managerInfo){
+              newMember = new Manager(answer.name, answer.email, answer.id, managerInfo.officeNumber);
+              employees.push(newMember)  
+              moreMembers();  
+            })
+              
           }
-          employees.push(newMember);
+         
           
-          .then(function() {
-              if (moreMembers === "yes") {
-                  addMember();
-              } else {
-                  console.log("All Done!");
-                  const Html = render(newMember);
-              }
-          });
-          
-      });
-  };
+      })
+    };
+
+    function moreMembers() {
+        inquirer.prompt([{
+            message: "Do you want to add more team memebers?",
+            name: "question"
+        }])
+        .then(function (otherAnswers){
+            if (otherAnswers.question === "yes") {
+                addMember();
+            } else {
+                console.log("All Done!");
+                // const Html = render(employees);
+                // outputPath(fs.Html);
+                return fs.writeFileSync(outputPath,render(employees),"utf-8") 
+            } 
+        })
+    };    
+
 
 initApp();
